@@ -14,14 +14,6 @@
   import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // 🔥 DÁN CONFIG TẠI ĐÂY
-  const firebaseConfig = {
-    apiKey: "DÁN_API_KEY",
-    authDomain: "DÁN_DOMAIN",
-    projectId: "DÁN_PROJECT_ID",
-    storageBucket: "DÁN_BUCKET",
-    messagingSenderId: "DÁN_SENDER",
-    appId: "DÁN_APP_ID"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -40,13 +32,6 @@
   window.logout = () => {
     signOut(auth);
   };
-
-  // USER STATE
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    document.getElementById("userName").innerText = user ? user.displayName : "Chưa đăng nhập";
-  });
-
   // POST
   window.postItem = async () => {
     const type = document.getElementById("type").value;
