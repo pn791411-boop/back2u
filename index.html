@@ -105,7 +105,21 @@ input,select,textarea {width:80%;margin:5px;padding:8px;border-radius:8px;border
 <button onclick="loginGoogle()">Đăng nhập Google</button>
 <button onclick="logout()">Đăng xuất</button>
 </header>
+<div style="margin-top:30px;">
+  <h3 id="user">Chưa đăng nhập</h3>
 
+  <button onclick="login()">Đăng nhập Google</button>
+  <button onclick="logout()">Đăng xuất</button>
+</div>
+
+<hr>
+
+<h3>Chat cộng đồng</h3>
+
+<div id="chatBox" style="height:200px; overflow:auto; border:1px solid #ccc; padding:10px;"></div>
+
+<input id="msg" placeholder="Nhập tin nhắn">
+<button onclick="sendMsg()">Gửi</button>
 <h3>Đăng tin</h3>
 
 <select id="type">
