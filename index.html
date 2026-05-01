@@ -3,150 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Back2U</title>
-
-<!-- Firebase (module) -->
-<script type="module">
-  // IMPORT
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
-  const db = getFirestore();
-
-  const provider = new GoogleAuthProvider();
-  let currentUser = null;
-
-  // LOGIN
-  window.loginGoogle = () => {
-    signInWithPopup(auth, provider);
-  };
-
-  // LOGOUT
-  window.logout = () => {
-    signOut(auth);
-  };
-  // POST
-  window.postItem = async () => {
-    const type = document.getElementById("type").value;
-    const item = document.getElementById("item").value;
-    const other = document.getElementById("other").value;
-    const location = document.getElementById("location").value;
-    const desc = document.getElementById("desc").value;
-
-    await addDoc(collection(db, "posts"), {
-      user: currentUser?.displayName || "Ẩn danh",
-      type,
-      item,
-      other,
-      location,
-      desc,
-      time: new Date()
-    });
-  };
-
-  // LOAD POSTS REALTIME
-  const q = query(collection(db, "posts"), orderBy("time", "desc"));
-  onSnapshot(q, (snapshot) => {
-    let html = "";
-    snapshot.forEach(doc => {
-      const d = doc.data();
-      html += `
-        <div class="post">
-          <b>${d.user}</b><br>
-          ${d.type} - ${d.item} ${d.other || ""}<br>
-          📍 ${d.location}<br>
-          📝 ${d.desc}
-        </div>
-      `;
-    });
-    document.getElementById("posts").innerHTML = html;
-  });
-</script>
+<title>Back2U App</title>
 
 <style>
-body {margin:0;font-family:Arial;background:#1e1e2f;color:white;text-align:center;}
-header {background:#151522;padding:15px;}
-button {padding:8px;border:none;border-radius:8px;margin:5px;cursor:pointer;}
-input,select,textarea {width:80%;margin:5px;padding:8px;border-radius:8px;border:none;}
-.team {display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
-.member img {width:110px;height:110px;border-radius:50%;object-fit:cover;}
-.post {border:1px solid #fff;margin:10px;padding:10px;border-radius:10px;}
-</style>
+body {
+  <div class="overlay"></div>
+  margin:0;
+  font-family:Arial;
+  color:white;
 
+  background: url("https://www.facebook.com/share/17LUmzYF2f/?mibextid=wwXIfr") no-repeat center center fixed;
+  background-size: cover;
+  .overlay {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  z-index:-1;
+}
+}
+header {display:flex;justify-content:space-between;align-items:center;padding:15px;background:#151522;}
+.tabs {display:flex;justify-content:center;background:#222;}
+.tabs button {flex:1;padding:10px;border:none;background:#222;color:white;}
+.tabs button.active {background:#ff4d4f;}
+.page {display:none;padding:20px;text-align:center;}
+.activePage {display:block;}
+input,select {padding:10px;margin:5px;border-radius:8px;border:none;}
+button {padding:8px 12px;border:none;border-radius:8px;background:#ff4d4f;color:white;}
+.card {background:#2c2c3e;padding:10px;margin:10px auto;width:300px;border-radius:10px;}
+#chatBox {height:200px;overflow:auto;border:1px solid #444;padding:10px;width:300px;margin:auto;}
+.member img {width:90px;height:90px;border-radius:50%;object-fit:cover;}
+.fb-link img {width:28px;}
+#mascot {position:fixed;bottom:10px;right:10px;width:80px;}
+</style>
 </head>
 
 <body>
 
 <header>
-<h2>Back2U</h2>
-<p id="userName">Chưa đăng nhập</p>
-<button onclick="loginGoogle()">Đăng nhập Google</button>
-<button onclick="logout()">Đăng xuất</button>
+  <div>
+    <img id="avatar" style="width:40px;border-radius:50%">
+    <span id="userName">Chưa đăng nhập</span>
+  </div>
+
+  <div>
+    <button onclick="loginGoogle()">Google</button>
+    <button onclick="loginFacebook()">Facebook</button>
+    <button onclick="logout()">Thoát</button>
+
+    <!-- 🔥 LINK FACEBOOK -->
+    <a class="fb-link" href="https://www.facebook.com/share/17LUmzYF2f/?mibextid=wwXIfr" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png">
+    </a>
+  </div>
 </header>
-<div style="margin-top:30px;">
-  <h3 id="user">Chưa đăng nhập</h3>
-  <button onclick="login()">Đăng nhập Google</button>
-  <button onclick="logout()">Đăng xuất</button>
+
+<div class="tabs">
+  <button onclick="showPage('home')" class="active">Trang chủ</button>
+  <button onclick="showPage('post')">Đăng tin</button>
+  <button onclick="showPage('chat')">Chat</button>
+  <button onclick="showPage('team')">Creators</button>
 </div>
 
-<hr>
-
-<h3>Chat cộng đồng</h3>
-
-<div id="chatBox" style="height:200px; overflow:auto; border:1px solid #ccc; padding:10px;"></div>
-
-<input id="msg" placeholder="Nhập tin nhắn">
-<button onclick="sendMsg()">Gửi</button>
-<h3>Đăng tin</h3>
-
-<select id="type">
-<option>Mất đồ</option>
-<option>Nhặt được</option>
-</select>
-
-<select id="item" onchange="document.getElementById('other').style.display = this.value==='Khác' ? 'block':'none'">
-<option>Ví</option>
-<option>Điện thoại</option>
-<option>Thẻ sinh viên</option>
-<option>Chìa khóa</option>
-<option>Khác</option>
-</select>
-
-<input id="other" placeholder="Tên đồ khác..." style="display:none">
-<input id="location" placeholder="Vị trí">
-<textarea id="desc" placeholder="Mô tả"></textarea>
-
-<button onclick="postItem()">Đăng</button>
-
-<h3>Bài đăng</h3>
-<div id="posts"></div>
-
-<h2>Back2U Creators</h2>
-
-<div class="team">
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604301d8197420aae7d7ea5ead4c8d81061b2.jpg"><p>Nguyễn Minh Anh</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604303ad02b1a4ffb5fb1c5a172660ad185a8.jpg"><p>Tạ Nhật Anh</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430f68df8c71bb403fdbfeee8f51cf25889.jpg"><p>Bùi Thị Bích Đào</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430aaaf5907fa5177c20602ec590f5bf1b0.jpg"><p>Chu Thị Khánh Hiền</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604300ce2ab8f26a37fb3dcd72e4b0c5769da.jpg"><p>Trịnh Hoàng Nhi</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430694c9571230ef6564fee600a037cfb3c.jpg"><p>Phạm Tâm Như</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430eba725eea00770e657c6cc620118b3b2.jpg"><p>Bùi Thị Thanh Thủy</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_2026043059500a555c31c8e62b6c3164752118aa.jpg"><p>Nguyễn Thị Thanh Thủy</p></div>
-<div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604303a1dd2c874d715d91c2a9b1c4c7767b5.jpg"><p>Trần Thanh Tuyền</p></div>
+<div id="home" class="page activePage">
+  <h2>Back2U</h2>
+  <p>Tìm lại đồ thất lạc dễ dàng</p>
 </div>
 
-<div style="margin:20px;">
-<a href="https://www.facebook.com/share/1BL6XtUYMR/?mibextid=wwXIfr" target="_blank">
-<button>Facebook</button>
-</a>
+<div id="post" class="page">
+  <h3>Đăng tin</h3>
+  <select id="type">
+    <option>Mất đồ</option>
+    <option>Nhặt được</option>
+  </select>
+  <input id="item" placeholder="Tên đồ">
+  <input id="location" placeholder="Vị trí">
+  <button onclick="post()">Đăng</button>
+  <div id="posts"></div>
 </div>
+
+<div id="chat" class="page">
+  <h3>Chat</h3>
+  <div id="chatBox"></div>
+  <input id="msg">
+  <button onclick="sendMsg()">Gửi</button>
+</div>
+
+<div id="team" class="page">
+  <h3>Back2U Creators</h3>
+
+  <!-- 🔥 ẢNH GIỮ NGUYÊN -->
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604301d8197420aae7d7ea5ead4c8d81061b2.jpg"><p>Nguyễn Minh Anh</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604303ad02b1a4ffb5fb1c5a172660ad185a8.jpg"><p>Tạ Nhật Anh</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430f68df8c71bb403fdbfeee8f51cf25889.jpg"><p>Bùi Thị Bích Đào</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430aaaf5907fa5177c20602ec590f5bf1b0.jpg"><p>Chu Thị Khánh Hiền</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604300ce2ab8f26a37fb3dcd72e4b0c5769da.jpg"><p>Trịnh Hoàng Nhi</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430694c9571230ef6564fee600a037cfb3c.jpg"><p>Phạm Tâm Như</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_20260430eba725eea00770e657c6cc620118b3b2.jpg"><p>Bùi Thị Thanh Thủy</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_2026043059500a555c31c8e62b6c3164752118aa.jpg"><p>Nguyễn Thị Thanh Thủy</p></div>
+  <div class="member"><img src="https://sf-static.upanhlaylink.com/img/image_202604303a1dd2c874d715d91c2a9b1c4c7767b5.jpg"><p>Trần Thanh Tuyền</p></div>
+</div>
+
+<!-- 🔥 MASCOT -->
+src="https://sf-static.upanhlaylink.com/img/image_20260501d3e08f7c94cb7ee61fd0f899d7306607.jpg" alt="e3ebfdcb-fffb-43a2-992c-7152852a2629.jpg"
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, FacebookAuthProvider,
+  signInWithPopup, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔥 CONFIG */
+const firebaseConfig = {
+  apiKey: "DÁN_Ở_ĐÂY",
+  authDomain: "DÁN_Ở_ĐÂY",
+  projectId: "DÁN_Ở_ĐÂY",
+  appId: "DÁN_Ở_ĐÂY"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore();
+
+const g = new GoogleAuthProvider();
+const f = new FacebookAuthProvider();
+
+window.loginGoogle = ()=>signInWithPopup(auth,g);
+window.loginFacebook = ()=>signInWithPopup(auth,f);
+window.logout = ()=>signOut(auth);
+
+onAuthStateChanged(auth,user=>{
+  if(user){
+    userName.innerText=user.displayName;
+    avatar.src=user.photoURL;
+  } else {
+    userName.innerText="Chưa đăng nhập";
+  }
+});
+
+window.post = async ()=>{
+  await addDoc(collection(db,"posts"),{
+    item:item.value,
+    location:location.value,
+    type:type.value
+  });
+};
+
+onSnapshot(collection(db,"posts"), snap=>{
+  posts.innerHTML="";
+  snap.forEach(doc=>{
+    const d=doc.data();
+    posts.innerHTML+=`<div class="card">${d.type} - ${d.item} (${d.location})</div>`;
+  });
+});
+
+onSnapshot(collection(db,"chat"), snap=>{
+  chatBox.innerHTML="";
+  snap.forEach(doc=>{
+    const d=doc.data();
+    chatBox.innerHTML+=`<p>${d.text}</p>`;
+  });
+});
+
+window.sendMsg = async ()=>{
+  if(!msg.value) return;
+  await addDoc(collection(db,"chat"),{text:msg.value});
+  msg.value="";
+};
+
+window.showPage = (id)=>{
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("activePage"));
+  document.getElementById(id).classList.add("activePage");
+};
+</script>
 
 </body>
 </html>
