@@ -1,186 +1,627 @@
+# Heart Galaxy UI – HTML/CSS/JS
+
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Back2U</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Heart Galaxy</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg, #1e1e2f, #2a2a40);
-  color: white;
-  text-align: center;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-h2 {
-  margin-top: 40px;
-  font-size: 28px;
+body{
+    overflow:hidden;
+    height:100vh;
+    background:
+    radial-gradient(circle at top,
+    #16162d 0%,
+    #09090f 40%,
+    #000000 100%);
+
+    font-family:'Poppins',sans-serif;
 }
 
-.team {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  padding: 30px;
+/* ======================
+   STAR SKY
+====================== */
+
+.stars{
+    position:fixed;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index:0;
 }
 
-.member {
-  background: #2c2c3e;
-  padding: 20px;
-  border-radius: 15px;
-  width: 160px;
-  transition: 0.3s;
+.star{
+    position:absolute;
+    border-radius:50%;
+    background:white;
+    animation:twinkle linear infinite;
 }
 
-.member:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+@keyframes twinkle{
+
+    0%{
+        opacity:0.2;
+        transform:scale(0.7);
+    }
+
+    50%{
+        opacity:1;
+        transform:scale(1.8);
+    }
+
+    100%{
+        opacity:0.2;
+        transform:scale(0.7);
+    }
 }
 
-.member img {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-  border: 3px solid #fff;
-  transition: 0.3s;
+/* Nebula */
+
+.nebula{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:0.4;
+    animation:moveNebula 15s ease-in-out infinite alternate;
 }
 
-.member:hover img {
-  transform: scale(1.1);
+.nebula.one{
+    width:350px;
+    height:350px;
+    background:#ff1493;
+    top:-100px;
+    left:-100px;
 }
 
-.member p {
-  margin-top: 12px;
-  font-size: 14px;
+.nebula.two{
+    width:300px;
+    height:300px;
+    background:#7b68ee;
+    bottom:-100px;
+    right:-80px;
 }
 
-header {
-  padding: 20px;
-  background: #151522;
+.nebula.three{
+    width:250px;
+    height:250px;
+    background:#00bfff;
+    top:50%;
+    left:60%;
 }
 
-nav a {
-  margin: 0 10px;
-  color: white;
-  text-decoration: none;
+@keyframes moveNebula{
+
+    from{
+        transform:translateY(0px) scale(1);
+    }
+
+    to{
+        transform:translateY(-20px) scale(1.1);
+    }
 }
 
-.hero {
-  padding: 40px 20px;
+/* Shooting stars */
+
+.shooting-star{
+    position:absolute;
+    width:150px;
+    height:2px;
+
+    background:linear-gradient(
+    90deg,
+    white,
+    rgba(255,255,255,0));
+
+    border-radius:999px;
+
+    transform:rotate(-25deg);
+
+    animation:shoot 5s linear infinite;
+
+    opacity:0;
 }
 
-.team {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 25px;
-  padding: 20px;
+.shooting-star::before{
+
+    content:"";
+    position:absolute;
+
+    width:8px;
+    height:8px;
+
+    background:white;
+
+    border-radius:50%;
+
+    top:-3px;
+
+    box-shadow:
+    0 0 10px white,
+    0 0 20px #8ec5ff;
 }
 
-.member {
-  text-align: center;
-  width: 140px;
+@keyframes shoot{
+
+    0%{
+        transform:
+        translateX(-200px)
+        translateY(-200px)
+        rotate(-25deg);
+
+        opacity:0;
+    }
+
+    10%{
+        opacity:1;
+    }
+
+    100%{
+        transform:
+        translateX(120vw)
+        translateY(70vh)
+        rotate(-25deg);
+
+        opacity:0;
+    }
 }
 
-.member img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-  border: 3px solid white;
+/* ======================
+   CENTER CONTENT
+====================== */
+
+.container{
+    position:relative;
+    z-index:5;
+
+    width:100%;
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
 }
 
-.member p {
-  margin-top: 10px;
-  font-size: 14px;
+.title{
+    position:absolute;
+    top:70px;
+
+    font-size:72px;
+    font-family:'Great Vibes',cursive;
+    color:white;
+
+    text-shadow:
+    0 0 10px #ff69b4,
+    0 0 20px #ff69b4,
+    0 0 40px #ff1493,
+    0 0 80px #ff1493;
+
+    animation:titleGlow 2s infinite alternate;
 }
 
-footer {
-  padding: 20px;
-  background: #151522;
-  margin-top: 30px;
+@keyframes titleGlow{
+
+    from{
+        opacity:0.8;
+    }
+
+    to{
+        opacity:1;
+    }
 }
+
+/* ======================
+   HEART AREA
+====================== */
+
+.heart-wrap{
+
+    position:relative;
+
+    width:420px;
+    height:420px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    animation:floatHeart 4s ease-in-out infinite;
+}
+
+@keyframes floatHeart{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-15px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+/* Glow */
+
+.heart-glow{
+
+    position:absolute;
+
+    width:450px;
+    height:450px;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(circle,
+    rgba(255,20,147,0.9) 0%,
+    rgba(255,20,147,0.25) 45%,
+    transparent 70%);
+
+    filter:blur(30px);
+
+    animation:glowPulse 2s infinite;
+}
+
+@keyframes glowPulse{
+
+    0%{
+        transform:scale(1);
+        opacity:0.7;
+    }
+
+    50%{
+        transform:scale(1.12);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(1);
+        opacity:0.7;
+    }
+}
+
+/* Big Heart */
+
+.heart{
+
+    position:relative;
+
+    width:240px;
+    height:240px;
+
+    transform:rotate(-45deg);
+
+    border-radius:40px;
+
+    background:
+    linear-gradient(
+    145deg,
+    #ffd6eb 0%,
+    #ff7cc2 20%,
+    #ff1493 50%,
+    #ff5eb3 70%,
+    #ffe6f4 100%);
+
+    box-shadow:
+    inset -12px -12px 30px rgba(255,255,255,0.3),
+    inset 10px 10px 25px rgba(255,0,128,0.4),
+    0 0 40px #ff4da6,
+    0 0 80px #ff1493,
+    0 0 150px rgba(255,20,147,0.8);
+
+    animation:heartbeat 1.5s infinite;
+}
+
+.heart::before,
+.heart::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:240px;
+    height:240px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+    145deg,
+    #ffd6eb 0%,
+    #ff7cc2 20%,
+    #ff1493 50%,
+    #ff5eb3 70%,
+    #ffe6f4 100%);
+}
+
+.heart::before{
+    top:-120px;
+    left:0;
+}
+
+.heart::after{
+    left:120px;
+    top:0;
+}
+
+/* Heart Beat */
+
+@keyframes heartbeat{
+
+    0%{
+        transform:rotate(-45deg) scale(1);
+    }
+
+    25%{
+        transform:rotate(-45deg) scale(1.08);
+    }
+
+    40%{
+        transform:rotate(-45deg) scale(1.15);
+    }
+
+    60%{
+        transform:rotate(-45deg) scale(1.08);
+    }
+
+    100%{
+        transform:rotate(-45deg) scale(1);
+    }
+}
+
+/* ======================
+   LIGHT SPARKLES
+====================== */
+
+.spark{
+
+    position:absolute;
+
+    width:8px;
+    height:8px;
+
+    background:white;
+
+    border-radius:50%;
+
+    box-shadow:
+    0 0 10px white,
+    0 0 20px #ff69b4,
+    0 0 40px #ff1493;
+
+    animation:sparkle 2s infinite;
+}
+
+@keyframes sparkle{
+
+    0%{
+        transform:scale(0);
+        opacity:0;
+    }
+
+    50%{
+        transform:scale(2);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(0);
+        opacity:0;
+    }
+}
+
+/* ======================
+   SMALL FLOATING HEARTS
+====================== */
+
+.small-heart{
+
+    position:absolute;
+
+    width:20px;
+    height:20px;
+
+    background:#ff69b4;
+
+    transform:rotate(-45deg);
+
+    opacity:0.9;
+
+    animation:fly 10s linear infinite;
+
+    box-shadow:
+    0 0 10px #ff69b4,
+    0 0 25px #ff1493;
+}
+
+.small-heart::before,
+.small-heart::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:20px;
+    height:20px;
+
+    border-radius:50%;
+
+    background:#ff69b4;
+}
+
+.small-heart::before{
+    top:-10px;
+    left:0;
+}
+
+.small-heart::after{
+    left:10px;
+    top:0;
+}
+
+@keyframes fly{
+
+    0%{
+        transform:
+        translateY(100vh)
+        rotate(-45deg);
+
+        opacity:0;
+    }
+
+    10%{
+        opacity:1;
+    }
+
+    100%{
+        transform:
+        translateY(-120vh)
+        rotate(-45deg);
+
+        opacity:0;
+    }
+}
+
 </style>
-
 </head>
-
 <body>
 
-<header>
-  <h1>Back2U</h1>
-  <nav>
-    <a href="#">Trang chủ</a>
-    <a href="#">Tìm đồ</a>
-    <a href="#">Đăng tin</a>
-    <a href="#">Badge Center</a>
-  </nav>
-</header>
+<!-- STAR SKY -->
 
-<section class="hero">
-  <h2>Mất đồ ở giảng đường?</h2>
-  <p>Tìm lại nhanh chóng cùng cộng đồng sinh viên USSH Hà Nội</p>
-</section>
+<div class="stars" id="stars">
 
-<h2>Back2U Creators</h2>
+    <div class="nebula one"></div>
+    <div class="nebula two"></div>
+    <div class="nebula three"></div>
 
-<section class="team">
+    <div class="shooting-star"
+    style="top:10%; left:-20%; animation-delay:0s;"></div>
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_202604301d8197420aae7d7ea5ead4c8d81061b2.jpg">
-    <p>Nguyễn Minh Anh</p>
-  </div>
+    <div class="shooting-star"
+    style="top:40%; left:-40%; animation-delay:2s;"></div>
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_202604303ad02b1a4ffb5fb1c5a172660ad185a8.jpg">
-    <p>Tạ Nhật Anh</p>
-  </div>
+    <div class="shooting-star"
+    style="top:70%; left:-30%; animation-delay:4s;"></div>
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_20260430f68df8c71bb403fdbfeee8f51cf25889.jpg">
-    <p>Bùi Thị Bích Đào</p>
-  </div>
+</div>
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_20260430aaaf5907fa5177c20602ec590f5bf1b0.jpg">
-    <p>Chu Thị Khánh Hiền</p>
-  </div>
+<!-- CONTENT -->
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_202604300ce2ab8f26a37fb3dcd72e4b0c5769da.jpg">
-    <p>Trịnh Hoàng Nhi</p>
-  </div>
+<div class="container">
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_20260430694c9571230ef6564fee600a037cfb3c.jpg">
-    <p>Phạm Tâm Như</p>
-  </div>
+    <div class="title">
+        I Love You
+    </div>
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_20260430eba725eea00770e657c6cc620118b3b2.jpg">
-    <p>Bùi Thị Thanh Thủy</p>
-  </div>
+    <div class="heart-wrap">
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_2026043059500a555c31c8e62b6c3164752118aa.jpg">
-    <p>Nguyễn Thị Thanh Thủy</p>
-  </div>
+        <div class="heart-glow"></div>
 
-  <div class="member">
-    <img src="https://sf-static.upanhlaylink.com/img/image_202604303a1dd2c874d715d91c2a9b1c4c7767b5.jpg">
-    <p>Trần Thanh Tuyền</p>
-  </div>
+        <div class="heart"></div>
 
-</section>
+        <!-- Sparkles -->
 
-<footer>
-  Made with ❤️ by Back2U Creators
-</footer>
+        <div class="spark"
+        style="top:30px; left:40px;"></div>
+
+        <div class="spark"
+        style="top:60px; right:20px;"></div>
+
+        <div class="spark"
+        style="bottom:40px; left:10px;"></div>
+
+        <div class="spark"
+        style="bottom:80px; right:40px;"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ======================
+   CREATE STARS
+====================== */
+
+const stars = document.getElementById("stars");
+
+for(let i = 0; i < 300; i++){
+
+    let star = document.createElement("div");
+
+    star.classList.add("star");
+
+    let size = Math.random() * 3;
+
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+
+    star.style.animationDuration =
+    (Math.random() * 3 + 2) + "s";
+
+    star.style.animationDelay =
+    (Math.random() * 5) + "s";
+
+    stars.appendChild(star);
+}
+
+/* ======================
+   FLOATING HEARTS
+====================== */
+
+setInterval(()=>{
+
+    let heart = document.createElement("div");
+
+    heart.classList.add("small-heart");
+
+    heart.style.left =
+    Math.random() * 100 + "vw";
+
+    let size = Math.random() * 20 + 10;
+
+    heart.style.width = size + "px";
+    heart.style.height = size + "px";
+
+    heart.style.animationDuration =
+    (Math.random() * 6 + 5) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(()=>{
+        heart.remove();
+    },10000);
+
+},250);
+
+</script>
 
 </body>
 </html>
+```
+
+## Cách chạy
+
+1. Tạo file `index.html`
+2. Copy toàn bộ code vào file
+3. Mở bằng trình duyệt
+4. Hoặc chạy bằng VS Code + Live Server
